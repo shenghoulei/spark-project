@@ -1,30 +1,31 @@
-package bhfae
+package ssjt
 
 import java.sql.{Connection, DriverManager, PreparedStatement}
 import java.text.SimpleDateFormat
 import java.util.Date
 
 import org.apache.spark.{SparkConf, SparkContext}
-import utils.DateTool
 
-object TestCount {
+object TestCountLocal {
 
 	def main(args: Array[String]) {
 
 		// 1 设置配置文件
-		val conf = new SparkConf().setAppName("mySpark")
+		val conf = new SparkConf().setMaster("local[3]").setAppName("mySpark")
 
 		// 2 获取spark core的应用上下文
 		val sc = new SparkContext(conf)
 
 		// 3 设定读取路径,读取数据
-		val pathFile = "hdfs://hadoop03/flume/"+ "access.log"
+		val pathFile = "D:\\data\\" + "word.txt"
 		val texts = sc.textFile(pathFile)
-		val date = DateTool.getNowDate
+		val date = "20181013"
 		val total = texts.count()
 		val count404 = texts.filter(_.contains("\" 404 ")).count()
 		val ratio = count404 * 1.0 / total
 		myFun(date, total, count404, ratio)
+
+
 	}
 
 	/**
@@ -54,7 +55,9 @@ object TestCount {
 			ps.setDouble(4, data._4)
 
 			ps.executeUpdate()
-		}  finally {
+		} catch {
+			case _: Exception => println("Mysql Exception")
+		} finally {
 			if (ps != null) {
 				ps.close()
 			}
