@@ -1,17 +1,17 @@
 package com.bhfae.kafka
 
+import java.util.Date
+
 import org.apache.spark.streaming.kafka.KafkaUtils
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.{SparkConf, SparkContext}
-
-import scala.collection.mutable
 
 object ReadKafka {
 
 	def main(args: Array[String]): Unit = {
 
 		// 1 本地环境设置---至少启动两个,一个监听,一个消费
-		val conf = new SparkConf().setMaster("local[3]").setAppName("ReadKafka")
+		val conf = new SparkConf().setAppName("ReadKafka")
 
 		// 2 SparkContext
 		val sc = new SparkContext(conf)
@@ -30,16 +30,14 @@ object ReadKafka {
 		val topic = Map("ssjt_test" -> 1)
 
 		// 6 从kafka读取数据(从kafka的偏移量存到zookeeper),并输出
-		val map = mutable.HashMap[String,Int]()
-
 		val kafkaStream = KafkaUtils.createStream(ssc, zkHosts, groupName, topic).map(_._2)
+		val result = kafkaStream.flatMap(_.split(" ")).map((_, 1)).reduceByKey(_ + _)
+		val date=new Date().getTime.toString
+		result.saveAsTextFiles("hdfs://hadoop05/kafka/"+date)
 
-		kafkaStream.print()
-		println("success")
 
 		// 7 启动SparkStreaming
 		ssc.start()
-
 		// 8 保持SparkStreaming线程一直开启
 		ssc.awaitTermination()
 
