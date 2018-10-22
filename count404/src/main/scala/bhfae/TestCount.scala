@@ -25,6 +25,7 @@ object TestCount {
 		val count404 = texts.filter(_.contains("\" 404 ")).count()
 		val ratio = count404 * 1.0 / total
 		myFun(date, total, count404, ratio)
+		sc.stop()
 	}
 
 	/**
