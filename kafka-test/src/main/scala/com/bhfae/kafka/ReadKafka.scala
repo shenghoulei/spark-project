@@ -10,7 +10,7 @@ object ReadKafka {
 
 	def main(args: Array[String]): Unit = {
 
-		// 1 本地环境设置---至少启动两个,一个监听,一个消费
+		// 1 集群运行环境设置
 		val conf = new SparkConf().setAppName("ReadKafka")
 
 		// 2 SparkContext
