@@ -1,11 +1,9 @@
-package ssjt
-
+package ssjt.stop
 
 import java.io.File
 
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.{SparkConf, SparkContext}
-
 
 object StopGracefullyLocalFile {
 

@@ -1,12 +1,11 @@
-package ssjt
+package ssjt.stop
 
 import java.util.Date
 
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.{SparkConf, SparkContext}
 
-
-object StopGracefullyHdfs {
+object StopGracefullyReadHdfs {
 	// 1 定义conf
 	val conf: SparkConf = new SparkConf()
 			//			.setMaster("local[5]")

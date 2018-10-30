@@ -1,4 +1,4 @@
-package ssjt
+package ssjt.read
 
 import java.io.File
 import java.nio.charset.Charset
@@ -9,45 +9,6 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming.{Seconds, StreamingContext, Time}
 import org.apache.spark.util.LongAccumulator
 import org.apache.spark.{SparkConf, SparkContext}
-
-/**
-  * Use this singleton to get or register a Broadcast variable.
-  */
-object WordBlacklist {
-
-	@volatile private var instance: Broadcast[Seq[String]] = null
-
-	def getInstance(sc: SparkContext): Broadcast[Seq[String]] = {
-		if (instance == null) {
-			synchronized {
-				if (instance == null) {
-					val wordBlacklist = Seq("a", "b", "c")
-					instance = sc.broadcast(wordBlacklist)
-				}
-			}
-		}
-		instance
-	}
-}
-
-/**
-  * Use this singleton to get or register an Accumulator.
-  */
-object DroppedWordsCounter {
-
-	@volatile private var instance: LongAccumulator = null
-
-	def getInstance(sc: SparkContext): LongAccumulator = {
-		if (instance == null) {
-			synchronized {
-				if (instance == null) {
-					instance = sc.longAccumulator("WordsInBlacklistCounter")
-				}
-			}
-		}
-		instance
-	}
-}
 
 /**
   * Counts words in text encoded with UTF8 received from the network every second. This example also
@@ -147,5 +108,45 @@ object RecoverableNetworkWordCount {
 		ssc.start()
 		ssc.awaitTermination()
 		ssc.stop()
+	}
+}
+
+
+/**
+  * Use this singleton to get or register a Broadcast variable.
+  */
+object WordBlacklist {
+
+	@volatile private var instance: Broadcast[Seq[String]] = null
+
+	def getInstance(sc: SparkContext): Broadcast[Seq[String]] = {
+		if (instance == null) {
+			synchronized {
+				if (instance == null) {
+					val wordBlacklist = Seq("a", "b", "c")
+					instance = sc.broadcast(wordBlacklist)
+				}
+			}
+		}
+		instance
+	}
+}
+
+/**
+  * Use this singleton to get or register an Accumulator.
+  */
+object DroppedWordsCounter {
+
+	@volatile private var instance: LongAccumulator = null
+
+	def getInstance(sc: SparkContext): LongAccumulator = {
+		if (instance == null) {
+			synchronized {
+				if (instance == null) {
+					instance = sc.longAccumulator("WordsInBlacklistCounter")
+				}
+			}
+		}
+		instance
 	}
 }

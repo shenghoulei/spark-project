@@ -1,22 +1,27 @@
-package ssjt
+package ssjt.stop
+
+import java.util.Date
 
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, Path}
-import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.streaming.{Seconds, StreamingContext}
+import org.apache.spark.{SparkConf, SparkContext}
 
-object StopGracefullyHdfs_1 {
+object StopGracefullyHdfs {
+	// 1 定义conf
+	val conf: SparkConf = new SparkConf()
+			//			.setMaster("local[5]")
+			.setAppName("mySpark")
+
+	// 2 定义SparkContext
+	val sc = new SparkContext(conf)
+	val ssc = new StreamingContext(sc, Seconds(5))
 
 	def main(args: Array[String]) {
-		// 1 定义conf
-		val conf = new SparkConf().setMaster("local[5]").setAppName("mySpark")
 
-		// 2 定义SparkContext
-		val sc = new SparkContext(conf)
-		val ssc = new StreamingContext(sc, Seconds(3))
-
-		val ds = ssc.socketTextStream("hadoop02", 9999)
-		ds.print()
+		val ds = ssc.socketTextStream("hadoop03", 8888)
+		ds.saveAsTextFiles("hdfs://hadoop05:8020/result/stop" + new Date().getTime)
+		//		ds.print()
 
 		ssc.start()
 		stopByMarkFile(ssc)
@@ -32,7 +37,7 @@ object StopGracefullyHdfs_1 {
 	def stopByMarkFile(ssc: StreamingContext): Unit = {
 		val timeOut = 5 * 1000 //Wait for the execution to stop.设置超时时间
 		var isStop = false // 循环检测的标记
-		val path = "hdfs://hadoop05:8020/test/stop" //判断是否停止应用的消息文件
+		val path = "hdfs://NameNode-5/test/stop/stop-1" //cdh集群上部署时要这样写，停止应用的消息文件夹
 
 		while (!isStop) {
 			// 检测应用是否停止
@@ -47,9 +52,9 @@ object StopGracefullyHdfs_1 {
 
 			// 此次没有收到停止应用的消息
 			if (!isExistsMarkFile(path)) {
-				print("没有检测到关闭信号")
+				println("没有检测到关闭信号")
 				// 设置检测的间隔
-				Thread.sleep(10000)
+				Thread.sleep(6000)
 			}
 		}
 	}

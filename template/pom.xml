@@ -65,12 +65,6 @@
             <version>${spark.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.specs</groupId>
-            <artifactId>specs</artifactId>
-            <version>1.2.5</version>
-            <scope>test</scope>
-        </dependency>
 
         <!-- 数据库连接的依赖-->
         <dependency>
@@ -98,7 +92,7 @@
                 <configuration>
                     <scalaVersion>${scala.version}</scalaVersion>
                     <args>
-                        <arg>-target:jvm-1.5</arg>
+                        <arg>-target:jvm-1.8</arg>
                     </args>
                 </configuration>
             </plugin>

@@ -1,8 +1,7 @@
-package ssjt
+package ssjt.read
 
 import org.apache.spark.SparkConf
 import org.apache.spark.streaming.{Seconds, StreamingContext}
-
 
 object ReadSocket {
 
@@ -33,4 +32,3 @@ object ReadSocket {
 		ssc.stop()
 	}
 }
-
